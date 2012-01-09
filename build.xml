@@ -1,0 +1,81 @@
+<project name="Ban Framework" default="build">
+    <target name="clean">
+        <delete dir="${basedir}/build"/>
+        <!-- 
+        <delete dir="${basedir}/generatedJUnitFiles"/>
+        -->
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/logs/coverage"/>
+        <mkdir dir="${basedir}/build/docs"/>
+    </target>
+
+    <target name="phpdoc">
+        <exec dir="${basedir}"
+            executable="phpdoc"
+            failonerror="true">
+            <arg line="	--directory .
+                --target build/docs/
+                --title 'Ban Framework'
+                --parseprivate on
+                --undocumentedelements off
+                --ignore public/*,scripts/*
+                --output HTML:Smarty:PHP"/>
+        </exec>
+    </target>
+
+    <target name="phpcpd">
+        <exec dir="${basedir}"
+            executable="phpcpd"
+            failonerror="false">
+            <arg line="--min-lines 5 --min-tokens 50 --log-pmd build/logs/cp.xml ."/>
+        </exec>
+    </target>
+
+    <target name="pdepend">
+        <exec dir="${basedir}"
+            executable="pdepend"
+            failonerror="false">
+            <arg line="
+            --jdepend-xml=build/logs/jdepend.xml 
+            --overview-pyramid=build/logs/overview-pyramid.svg  
+            --jdepend-chart=build/logs/dependencies.svg 
+            ."/>
+        </exec>
+    </target>
+
+    <target name="phpcs">
+        <exec dir="${basedir}"
+            executable="phpcs"
+            output="build/logs/checkstyle.xml"
+            failonerror="false">
+            <arg line="--report=checkstyle --standard=../tools/phpcs.xml --extensions=php ."/>
+        </exec>
+    </target>
+
+    <target name="phpunit">
+        <exec dir="${basedir}"
+            executable="phpunit"
+            failonerror="false">
+            <arg line="
+            --log-junit build/logs/phpunit.xml
+            --coverage-clover ${basedir}/build/logs/coverage/clover.xml
+            --coverage-html build/logs/coverage/
+            --configuration ${basedir}/tests/phpunit.xml
+            "/>
+        </exec>
+    </target>
+
+	<property environment="env"/>
+    
+    <property name="dbname" value="banframework_${env.EXECUTOR_NUMBER}"/>
+
+    <target name="mysql">
+        <echo message="Dropping database ${dbname}" /> 
+    </target>
+    
+    <target name="build" depends="mysql,clean,prepare,phpcs,phpcpd,pdepend,phpunit"/>
+
+</project>

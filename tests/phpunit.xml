@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./bootstrap.php">
+    <testsuite name="Ban Framework Test Suite">
+        <directory>./library/</directory>
+    </testsuite>
+    <filter>
+		<whitelist>
+            <directory suffix=".php">../library</directory>
+		</whitelist>
+	</filter>
+</phpunit>
