@@ -1,12 +1,12 @@
 BAN Framework
 =============
 
-A Zend-based framework for creating ReSTful APIs.
+A Zend-based framework for creating and consuming ReSTful APIs.
 
 Introduction
 ------------
 
-The BAN Framework is desighned to make it easy to create APIs that follow the
+The BAN Framework is designed to make it easy to create APIs that follow the
 principles of [Representational State Transfer](http://en.wikipedia.org/wiki/Representational_State_Transfer).
 
 BAN parts from traditional [MVC](http://en.wikipedia.org/wiki/Architectural_pattern_%28computer_science%29)
@@ -17,7 +17,7 @@ frameworks by using a three-tier architecture consisting of models, services and
 * *DAOs*: provide access to the underlying data later, such as a database message queue.
 
 Example Model
-_____________
+-------------
 
 This model defines a collection of resources called 'articles' and allows us to perform
 database CRUD operations via HTTP. The 'routes' defined will map calls to these URLs in
@@ -77,6 +77,17 @@ Update an article:
 Delete an article:
     
     DELETE http://ban-api.example.com/articles/<id>
+
+
+Api Client
+----------
+
+BAN comes with a
+
+Internals
+---------
+Ban_Map
+APC config cache
 
 
 License
