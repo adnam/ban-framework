@@ -90,7 +90,7 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
         if (!isset($row[$primary])) {
             $idField = $this->model->getProperty($this->getPrimary());
             if ($idField instanceof Ban_Property_Uuid) {
-                $row[$idField] = (string) $idField->gen();
+                $row[$this->getPrimary()] = (string) $idField->gen();
             }
             $result = $this->getDbTable()->insert($row);
         } else {
