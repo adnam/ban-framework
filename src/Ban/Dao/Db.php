@@ -86,14 +86,16 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
     
     public function save($row)
     {
-        if (!isset($row[$this->getPrimary()])) {
+        $primary = $this->getPrimary();
+        if (!isset($row[$primary])) {
             $idField = $this->model->getProperty($this->getPrimary());
             if ($idField instanceof Ban_Property_Uuid) {
-                $row['id'] = $idField->gen();
+                $row[$idField] = (string) $idField->gen();
             }
             $result = $this->getDbTable()->insert($row);
         } else {
-            $result = $this->getDbTable()->update($row, array('id = ?' => $id));
+            $this->getDbTable()->update($row, array('id = ?' => $row[$primary]));
+            $result = $row[$primary];
         }
         return $result;
     }

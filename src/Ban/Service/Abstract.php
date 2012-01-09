@@ -14,6 +14,12 @@ abstract class Ban_Service_Abstract implements Ban_Service_Interface
 
     public function normalizeParams($params = array())
     {
+        // Remove '_method' para is present
+        // TODO: move this to Ban_Request
+        if (array_key_exists('_method', $params)) {
+            unset($params['_method']);
+        }
+        
         $default = array(
             'limit' => 10,
             'page' => 0,
@@ -118,7 +124,17 @@ abstract class Ban_Service_Abstract implements Ban_Service_Interface
 
     public function put(Ban_Request $request)
     {
-        $params['id'] = $id;
+        $params = $this->normalizeParams($request->getParams());
+        $row = array();
+        foreach ($this->_model->getProperties() as $name => $property) {
+            if (array_key_exists($name, $params)) {
+                $row[$name] = $params[$name];
+            }
+        }
+        $id = $this->getDao()->save($row);
+        $result = $this->createResponse('recordid');
+        $result->id = $id;
+        return $result;
     }
     
     public function merge(Ban_Request $request)
@@ -127,10 +143,31 @@ abstract class Ban_Service_Abstract implements Ban_Service_Interface
     
     public function post(Ban_Request $request)
     {
+        $params = $this->normalizeParams($request->getParams());
+        $row = array();
+        foreach ($this->_model->getProperties() as $name => $property) {
+            if (array_key_exists($name, $params)) {
+                $row[$name] = $params[$name];
+            }
+        }
+        $id = $this->getDao()->save($row);
+        $result = $this->createResponse('recordid');
+        $result->id = $id;
+        return $result;
     }
     
     public function delete(Ban_Request $request)
     {
+        if ($request->id === null) {
+            throw new Ban_Exception_Client("You can only delete a specific resource", 401);
+        }
+        $deleted = $this->getDao()->delete(array("id = ?" => $request->id));
+        if ($deleted < 1) {
+            throw new Ban_Exception_Client("Resource with id [{$request->id}] does not exist", 404);
+        }
+        $result = $this->createResponse('recordid');
+        $result->id = $request->id;
+        return $result;
     }
 
 }

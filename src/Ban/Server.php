@@ -91,10 +91,12 @@ class Ban_Server
         $response->setContentType(Ban_ContentType::MIME_JSON);
         $response->setType('error');
         $response->error = array(
-                'message' => $exception->getMessage(),
-                'code' => $exception->getCode(),
-                'trace' => $exception->getTrace()
+            'message' => $exception->getMessage(),
+            'code' => $exception->getCode(),
         );
+        if (!$exception instanceof Ban_Exception) {
+            $response->error['trace'] = $exception->getTrace();
+        }
         return $response;
     }
 

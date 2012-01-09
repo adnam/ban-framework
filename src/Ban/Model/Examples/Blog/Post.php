@@ -29,4 +29,5 @@ class Ban_Model_Examples_Blog_Post extends Ban_Model_Abstract
         $this->addRoute('posts');
         $this->addRoute('posts/*', array('id'));
     }
+
 }
