@@ -4,11 +4,10 @@ BAN Framework
 A Zend-based framework for creating ReSTful APIs.
 
 
-
 License
 -------
 
-Copyright (c) 2010, Adam Hayward <adam - at - websitestori - dot - es>
+Copyright (c) 2010, Adam Hayward [adam - at - websitestori - dot - es]
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or 
