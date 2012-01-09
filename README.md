@@ -3,6 +3,81 @@ BAN Framework
 
 A Zend-based framework for creating ReSTful APIs.
 
+Introduction
+------------
+
+The BAN Framework is desighned to make it easy to create APIs that follow the
+principles of [Representational State Transfer](http://en.wikipedia.org/wiki/Representational_State_Transfer).
+
+BAN parts from traditional [MVC](http://en.wikipedia.org/wiki/Architectural_pattern_%28computer_science%29)
+frameworks by using a three-tier architecture consisting of models, services and DAOs as follows:
+
+* *Models*: define a resource-type or collection of resources, along with their properties, relations and routes.
+* *Services*: provides access to resources defined by a model via HTTP verbs: GET, PUT, POST, DELETE and also OPTIONS, HEAD and TRACE.
+* *DAOs*: provide access to the underlying data later, such as a database message queue.
+
+Example Model
+_____________
+
+This model defines a collection of resources called 'articles' and allows us to perform
+database CRUD operations via HTTP. The 'routes' defined will map calls to these URLs in
+our API with this model.
+
+```php
+class Example_Article
+    extends Ban_Model_Abstract
+    implements Ban_Model_Interface
+{
+    protected $_name = 'article';
+    protected $_collection = 'articles';
+    protected $_daoClass = 'Ban_Dao_Db';
+    protected $_serviceClass = 'Ban_Service_Generic';
+    
+    public function initProperties()
+    {
+        $this->addProperty('id', new Ban_Property_AutoId(), array());
+        $this->addProperty('title', new Ban_Property_String(), array());
+        $this->addProperty('article', new Ban_Property_String(), array());
+        $this->addProperty('created', new Ban_Property_Datetime(), array());
+        $this->addProperty('updated', new Ban_Property_Datetime(), array());
+    }
+
+    public function initRelations()
+    {
+        $this->addRelation('belongsTo', 'Ban_Model_Examples_Blog_User');
+		$this->addRelation('hasMany', 'Ban_Model_Examples_Blog_Post_Comment');
+    }
+
+    public function initRoutes()
+    {
+        $this->addRoute('articles');
+        $this->addRoute('articles/*', array('id'));
+    }
+}
+```
+
+Usage:
+
+Fetch a list of all articles:
+
+    GET http://ban-api.example.com/articles
+
+Fetch a specific article:
+
+    GET http://ban-api.example.com/articles/<id>
+
+Create a new article:
+
+    POST http://ban-api.example.com/articles
+
+Update an article:
+    
+    PUT http://ban-api.example.com/articles/<id>
+
+Delete an article:
+    
+    DELETE http://ban-api.example.com/articles/<id>
+
 
 License
 -------
