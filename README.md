@@ -55,8 +55,8 @@ class Example_Article
 
     public function initRelations()
     {
-        $this->addRelation('belongsTo', 'Ban_Model_Examples_Blog_User');
-		$this->addRelation('hasMany', 'Ban_Model_Examples_Blog_Post_Comment');
+        $this->addRelation('belongsTo', 'Example_User');
+		$this->addRelation('hasMany', 'Example_Comment');
     }
 
     public function initRoutes()
@@ -92,8 +92,6 @@ BAN comes with a built-in client so you can easily talk to yours APIs.
 
 Usage:
 
-```php
-
     // Create a client
     $client = new Ban_Client('http://ban-api.example.com/');
 
@@ -116,10 +114,7 @@ Usage:
     $client->put('articles/' . $id, $articleData);
 
     // Delete an article:
-        
     $client->delete('articles/' . $id);
-
-```
 
 Api Server Map
 --------------
