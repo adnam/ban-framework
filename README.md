@@ -134,7 +134,7 @@ the resources available for our service. For example:
 
      GET http://ban-api.example.com/
 
-´´´js
+```js
 {
   "result": {
     /* Array of namespaces where our models are defined */
@@ -181,7 +181,7 @@ the resources available for our service. For example:
       }
   }
 }
-´´´
+```
 
 License
 -------
