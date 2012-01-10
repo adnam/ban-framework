@@ -67,28 +67,23 @@ class Example_Article
 }
 ```
 
-Usage:
+Usage
+-----
 
-Fetch a list of all articles:
-
+    Fetch a list of all articles:
     GET http://ban-api.example.com/articles
 
-Fetch a specific article:
-
+    Fetch a specific article:
     GET http://ban-api.example.com/articles/<id>
 
-Create a new article:
-
+    Create a new article:
     POST http://ban-api.example.com/articles
 
-Update an article:
-    
+    Update an article:
     PUT http://ban-api.example.com/articles/<id>
 
-Delete an article:
-    
+    Delete an article:
     DELETE http://ban-api.example.com/articles/<id>
-
 
 Api Client
 ----------
