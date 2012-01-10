@@ -1,7 +1,10 @@
 BAN Framework
 =============
 
-A Zend-based framework for creating and consuming ReSTful APIs.
+* A Zend-based framework for creating and consuming ReSTful APIs.
+* Uses Json serialisation by default.
+* Author: Adam Hayward [adam - at - websitestori - dot - es]
+* Web: http://websitestori.es
 
 Introduction
 ------------
@@ -14,7 +17,7 @@ frameworks by using a three-tier architecture consisting of models, services and
 
 * *Models*: define a resource-type or collection of resources, along with their properties, relations and routes.
 * *Services*: provides access to resources defined by a model via HTTP verbs: GET, PUT, POST, DELETE and also OPTIONS, HEAD and TRACE.
-* *DAOs*: provide access to the underlying data later, such as a database message queue.
+* *DAOs*: provide access to the underlying data layer, such as a database or message queue.
 
 Example Model
 -------------
@@ -122,6 +125,63 @@ Usage:
     $client->delete('articles/' . $id);
 
 ```
+
+Api Server Map
+--------------
+
+When we visit the 'homepage' (root) of our api, we can get information about
+the resources available for our service. For example:
+
+     GET http://ban-api.example.com/
+
+´´´js
+{
+  "result": {
+    /* Array of namespaces where our models are defined */
+    "namespaces": [
+      "Plio_Model"
+    ],
+    
+    /* Array of models */
+    "models": [
+      "article",
+      "author"
+    ],
+    
+    /* Array mapping URLs to models */
+    "routes": [
+      {
+        "uri": null,
+        "model": "root",
+        "params": []
+      },
+      {
+        "uri": "/articles",
+        "model": "article",
+        "params": []
+      },
+      {
+        "uri": "/articles/*",
+        "model": "article",
+        "params": [
+          "id"
+        ]
+      },
+      {
+        "uri": "/authors",
+        "model": "author",
+        "params": []
+      },
+      {
+        "uri": "/authors/*",
+        "model": "author",
+        "params": [
+          "id"
+        ]
+      }
+  }
+}
+´´´
 
 License
 -------
