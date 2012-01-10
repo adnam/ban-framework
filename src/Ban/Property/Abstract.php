@@ -7,6 +7,7 @@ class Ban_Property_Abstract
         'type' => null,
         'index' => false,
         'primary' => false,
+        'unique' => false,
         'validator' => null
     );
 
@@ -14,6 +15,7 @@ class Ban_Property_Abstract
         'type' => null,
         'index' => false,
         'primary' => false,
+        'unique' => false,
         'validator' => null
     );
     
@@ -52,6 +54,17 @@ class Ban_Property_Abstract
     public function isIndex()
     {
         return $this->_options['index'];
+    }
+
+    public function setUnique($unique = true)
+    {
+        $this->_options['unique'] = (bool) $unique;
+        return $this;
+    }
+    
+    public function isUnique()
+    {
+        return $this->_options['unique'];
     }
 
     public function setValidator(Ban_Validator_Abstract $validator)

@@ -9,6 +9,7 @@ class Ban_Property_Email extends Ban_Property_String
         'name' => null,
         'index' => true,
         'primary' => false,
+        'unique' => true,
     );
     
     public function validate(&$value)
