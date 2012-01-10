@@ -65,4 +65,12 @@ class Ban_Property_Abstract
         return $this->_options;
     }
 
+    public function getOption($name)
+    {
+        if (!array_key_exists($name, $this->_options)) {
+            return null;
+        }
+        return $this->_options[$name];
+    }
+
 }
