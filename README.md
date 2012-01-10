@@ -19,9 +19,17 @@ frameworks by using a three-tier architecture consisting of models, services and
 Example Model
 -------------
 
-This model defines a collection of resources called 'articles' and allows us to perform
-database CRUD operations via HTTP. The 'routes' defined will map calls to these URLs in
-our API with this model.
+Unlike many other frameworks, BAN models provide no data access. They simply 
+specify:
+
+* Properties belonging to the model
+* Relations with other models
+* Routes to map URIs to a given model
+* Which service will handle HTTP requests
+
+The following model defines a collection of resources called 'articles' and 
+allows us to perform database CRUD operations via HTTP. The 'routes' defined 
+will map calls to these URLs in our API with this model.
 
 ```php
 class Example_Article
@@ -82,13 +90,38 @@ Delete an article:
 Api Client
 ----------
 
-BAN comes with a
+BAN comes with a built-in client so you can easily talk to yours APIs.
 
-Internals
----------
-Ban_Map
-APC config cache
+Usage:
 
+```php
+
+    // Create a client
+    $client = new Ban_Client('http://ban-api.example.com/');
+
+    // Fetch a list of all articles:
+
+    $client->get('articles');
+
+    // Fetch a specific article:
+
+    $client->get('articles/' . $id);
+
+    // Create a new article:
+    
+    $articleData = array('title' => 'New Article', /* etc */);
+    $client->post('articles', $articleData);
+
+    // Update an article:
+        
+    $articleData = array('title' => 'Newer Article');
+    $client->put('articles/' . $id, $articleData);
+
+    // Delete an article:
+        
+    $client->delete('articles/' . $id);
+
+```
 
 License
 -------
