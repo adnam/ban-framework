@@ -94,7 +94,10 @@ class Ban_Server
             'message' => $exception->getMessage(),
             'code' => $exception->getCode(),
         );
-        if (!$exception instanceof Ban_Exception) {
+        if ($exception instanceof Ban_Exception) {
+            $response->setHttpResponseCode($exception->getCode());
+        } else {
+            $response->setHttpResponseCode(500);
             $response->error['trace'] = $exception->getTrace();
         }
         return $response;
@@ -158,7 +161,7 @@ class Ban_Server
             $request = Ban_Request::createFromZendRequest($request, $this->_baseUrl);
         }
         $response = $this->getResponse($request);
-        $response->setHttpResponseCode($this->_responseCode);
+        // $response->setHttpResponseCode($this->_responseCode);
         $response->setHeader('etag', $this->getEtag($response->result));
         return $response;
     }
