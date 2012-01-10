@@ -147,7 +147,11 @@ abstract class Ban_Service_Abstract implements Ban_Service_Interface
         $row = array();
         foreach ($this->_model->getProperties() as $name => $property) {
             if (array_key_exists($name, $params)) {
-                $row[$name] = $params[$name];
+                if ($property instanceof Ban_Property_Password) {
+                    $row[$name] = $property->getStorageValue($params[$name]);
+                } else {
+                    $row[$name] = $params[$name];
+                }
             }
         }
         $id = $this->getDao()->save($row);
