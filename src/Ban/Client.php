@@ -98,7 +98,7 @@ class Ban_Client
     protected function _request($method, $path, &$params)
     {
         $uri = clone($this->_serviceUri);
-        $uri->setPath($uri->getPath() . '/' . ltrim($path, '/'));
+        $uri->setPath(rtrim($uri->getPath(), '/') . '/' . ltrim($path, '/'));
         $httpClient = self::getHttpClient();
         $req = $httpClient->resetParameters()
             ->setEncType(Zend_Http_Client::ENC_URLENCODED)
@@ -107,7 +107,7 @@ class Ban_Client
             case Zend_Http_Client::HEAD:
             case Zend_Http_Client::GET:
             case Zend_Http_Client::OPTIONS:
-                return $req->setParameterGet($params)->request($method);
+                $response = $req->setParameterGet($params)->request($method);
                 break;
             
             case Zend_Http_Client::POST:
@@ -115,9 +115,10 @@ class Ban_Client
             case Zend_Http_Client::DELETE:
             case Zend_Http_Client::MERGE:
             case Zend_Http_Client::TRACE:
-                return $req->setParameterPost($params)->request($method);
+                $response = $req->setParameterPost($params)->request($method);
                 break;
         }
+        return Ban_Response::createFromZendHttpResponse($response);
     }
     
     public function handleResponse(Zend_Http_Response $response)
@@ -141,10 +142,7 @@ class Ban_Client
 
     function get($path, $params = array())
     {
-        $response = $this->_request(Zend_Http_Client::GET, $path, $params);
-        $result = $this->handleResponse($response);
-        return $result;
-        //dump($result);
+        return $this->_request(Zend_Http_Client::GET, $path, $params);
     }
     
     function put($path, $params)
@@ -170,6 +168,11 @@ class Ban_Client
     function options($path, $params)
     {
         return $this->_request(Zend_Http_Client::OPTIONS, $path, $params);
+    }
+
+    function trace($path, $params)
+    {
+        return $this->_request(Zend_Http_Client::TRACE, $path, $params);
     }
 
 }

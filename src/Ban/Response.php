@@ -6,6 +6,31 @@ class Ban_Response extends Zend_Controller_Response_Abstract
     public function __construct()
     {
         // dump(__class__ . '::' . __function__);
+        if ($this->canSendHeaders()) {
+            $this->setHeader('Allow', 'GET,HEAD,POST,PUT,PATCH,TRACE,OPTIONS', 1);
+        }
+    }
+    
+    public static function createFromZendHttpResponse(Zend_Http_Response $response)
+    {
+        $banResponse = new Ban_Response();
+        foreach ($response->getHeaders() as $header => $value) {
+            $banResponse->setHeader($header, $value);
+        }
+        $contentType = Ban_ContentType::fromString($response->getHeader('Content-type'));
+        $banResponse->setHeader('Content-type', $contentType, true);
+        $banResponse->setHttpResponseCode($response->getStatus());
+        if ($contentType->isJson()) {
+            try {
+                $decoded = Zend_Json::decode($response->getBody());
+                foreach ($decoded as $part => $content) {
+                    $banResponse->setBody($content, $part);
+                }
+            } catch (Zend_Json_Exception $e) {
+                // Do nothing
+            }
+        }
+        return $banResponse;
     }
 
     protected $_contentType;
@@ -23,7 +48,27 @@ class Ban_Response extends Zend_Controller_Response_Abstract
     {
         return $this->_contentType;
     }
-    
+
+    public function getStatus()
+    {
+        return $this->getHttpResponseCode();
+    }
+
+    public function isOk()
+    {
+        return ($this->getHttpResponseCode() == 200);
+    }
+
+    public function notExist()
+    {
+        return ($this->getHttpResponseCode() == 404);
+    }
+
+    public function badRequest()
+    {
+        return ($this->getHttpResponseCode() == 400);
+    }
+
     /**
      * Set a header
      *
@@ -114,6 +159,23 @@ class Ban_Response extends Zend_Controller_Response_Abstract
     {
         return $this->setBody($content, $name);
     }
+    
+    public function &__get($spec)
+    {
+        if (array_key_exists($spec, $this->_body)) {
+            if (is_array($this->_body[$spec])) {
+                return $this->_body[$spec];
+            }
+            return $this->_body[$spec];
+        }
+        static $null = null;
+        return $null;
+    }
+    
+    public function __isset($spec)
+    {
+        return isset($this->_body[$spec]);
+    }
 
     /**
      * Set body content
@@ -139,6 +201,38 @@ class Ban_Response extends Zend_Controller_Response_Abstract
         return $this;
     }
 
+
+    /**
+     * Return the raw body content
+     *
+     * @return string|array|null
+     */
+    public function getRawBody()
+    {
+        return $this->_body;
+    }
+
+    /**
+     * Return the body content
+     *
+     * If $spec is false, returns the concatenated values of the body content
+     * array. If $spec is boolean true, returns the body content array. If
+     * $spec is a string and matches a named segment, returns the contents of
+     * that segment; otherwise, returns null.
+     *
+     * @param boolean $spec
+     * @return string|array|null
+     */
+    public function getBody($spec = false)
+    {
+        if (false === $spec || true === $spec) {
+            return $this->_body;
+        } elseif (is_string($spec) && array_key_exists($spec, $this->_body)) {
+            return $this->_body[$spec];
+        }
+        return null;
+    }
+    
     /**
      * Append content to the body content
      *

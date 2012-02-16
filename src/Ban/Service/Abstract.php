@@ -38,7 +38,6 @@ abstract class Ban_Service_Abstract implements Ban_Service_Interface
         } else {
             $params['page'] = $default['page'];
         }
-        
         if (!array_key_exists('filter', $params) || empty($params['filter']) || !is_array($params['filter'])) {
             $params['filter'] = $default['filter'];
         }

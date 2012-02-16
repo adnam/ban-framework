@@ -232,7 +232,7 @@ abstract class Ban_Model_Abstract implements Ban_Model_Interface
     protected function addRelation($type, $model)
     {
         if (!array_key_exists($type, $this->_relations)) {
-            throw new Exception("Unknown relation type [$type]", 500);
+            throw new Ban_Exception_Server("Unknown relation type [$type]", 500);
         }
         if (is_string($model)) {
             $model = $model::getInstance();
@@ -271,7 +271,7 @@ abstract class Ban_Model_Abstract implements Ban_Model_Interface
         if ($type === null) {
             return $this->_relations;
         } elseif (!array_key_exists($type, $this->_relations)) {
-            throw new Exception("Unknown relation type [$type]", 500);
+            throw new Ban_Exception_Server("Unknown relation type [$type]", 500);
         }
         return $this->_relations[$type];
     }
@@ -285,7 +285,7 @@ abstract class Ban_Model_Abstract implements Ban_Model_Interface
     {
         $cls = 'Ban_Model_Property_' . ucfirst($type);
         if (!class_exists($cls)) {
-            throw new Exception("Property tyle [$cls] does not exist", 500);
+            throw new Ban_Exception_Server("Property tyle [$cls] does not exist", 500);
         }
         $property = new $type($options);
         return $property;

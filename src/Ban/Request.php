@@ -12,7 +12,7 @@ class Ban_Request extends Zend_Controller_Request_Http
     protected $_method;
     
     protected $_params = array(
-        'filter' => array(),
+        // 'filter' => array(),
         // 'order' => null,
         'dir' => 'ASC'
     );
@@ -67,7 +67,7 @@ class Ban_Request extends Zend_Controller_Request_Http
     
     public function setMethod($method)
     {
-        $this->_method = strtoupper($method);
+        $this->_method = strtolower($method);
     }
 
     public function setFilter($propertyName, $filter)
@@ -94,12 +94,17 @@ class Ban_Request extends Zend_Controller_Request_Http
     {
         return $this->_params['order'];
     }
-
-    public function isRoot()
-    {
-        return $this->getResourceClass() === null;
-    }
     
+    public function setPage($page)
+    {
+        $this->_params['page'] = $page;
+    }
+
+    public function getPage()
+    {
+        return (int) $this->_params['page'];
+    }
+
     public function parseRequestUri()
     {
         $parts = explode('/', $this->getPathInfo());

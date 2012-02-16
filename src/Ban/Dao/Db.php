@@ -29,7 +29,7 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
             $dbTable = new $dbTable($this->model->getCollection());
         }
         if (!$dbTable instanceof Zend_Db_Table_Abstract) {
-            throw new Exception('Invalid table data gateway provided');
+            throw new Ban_Exception_Server('Invalid table data gateway provided', 500);
         }
         $this->_dbTable = $dbTable;
         return $this;
@@ -53,7 +53,7 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
         $result = $this->getDbTable()->find($id)->current();
         if ($result === null) {
             $name = $this->model->getName();
-            throw new Exception("Entity [$name] with id [$id] does not exist", 404);
+            throw new Ban_Exception_Client("Entity [$name] with id [$id] does not exist", 404);
         }
         return $result->toArray();
     }
@@ -71,7 +71,7 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
                 if (isset($val[0]) && $val[0] === '~') {
                     $select->where("$col LIKE ?", substr($val, 1));
                 } else {
-                    $select->where("$col = ?", $val);
+                    $select->where("$col LIKE ?", $val);
                 }
             }
         }
@@ -83,7 +83,28 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
         $resultSet = $this->getDbTable()->fetchAll($select);
         return $resultSet->toArray();
     }
-    
+
+    public function insert($row)
+    {
+        $primary = $this->getPrimary();
+        if (!isset($row[$primary])) {
+            $idField = $this->model->getProperty($this->getPrimary());
+            if ($idField instanceof Ban_Property_Uuid) {
+                $row[$this->getPrimary()] = (string) $idField->gen();
+            }
+        }
+        $result = $this->getDbTable()->insert($row);
+        return $result;
+    }
+
+    public function update($row)
+    {
+        $primary = $this->getPrimary();
+        $this->getDbTable()->update($row, array('id = ?' => $row[$primary]));
+        $result = $row[$primary];
+        return $result;
+    }
+
     public function save($row)
     {
         $primary = $this->getPrimary();
@@ -124,15 +145,16 @@ class Ban_Dao_Db extends Ban_Dao_Abstract
     {
         $table = $this->getDbTable();
         $select = $table->select()->from($table, array('count(*) as cnt'));
-        if (!empty($where)) {
+        if (!empty($filter)) {
             foreach($filter as $col => $val) {
                 if (!in_array($col, $table->info('cols'))) {
                     continue;
                 }
                 if (isset($val[0]) && $val[0] === '~') {
-                    $select->filter("$col LIKE ?", substr($val, 1));
+                    $expr = $select->getAdapter()->quoteInto("$col LIKE ?", '%' . substr($val, 1) . '%');
+                    $select->where($expr);
                 } else {
-                    $select->filter("$col = ?", $val);
+                    $select->where("$col LIKE ?", $val);
                 }
             }
         }

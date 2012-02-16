@@ -21,7 +21,7 @@ class Ban_Record_Abstract
             $this->_properties[$name] = $value;
             return;
         }
-        throw new Exception("Invalid property [$name]");
+        throw new Ban_Exception_Server("Invalid property [$name]", 500);
     }
 	
     public function __get($name)
@@ -33,7 +33,7 @@ class Ban_Record_Abstract
         if (array_key_exists($name, $this->_properties)) {
             return $this->_properties[$name];
         }
-        throw new Exception("Invalid property [$name]");
+        throw new Ban_Exception_Server("Invalid property [$name]");
     }
 
     public function __call($method, $args)

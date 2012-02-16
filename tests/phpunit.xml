@@ -2,9 +2,11 @@
 <phpunit bootstrap="./bootstrap.php">
     <testsuite name="Ban Framework Test Suite">
         <directory>./library/</directory>
+        <directory>./application/</directory>
     </testsuite>
     <filter>
 		<whitelist>
+            <directory suffix=".php">../example</directory>
             <directory suffix=".php">../library</directory>
 		</whitelist>
 	</filter>

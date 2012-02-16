@@ -162,7 +162,7 @@ class Ban_Server
         }
         $response = $this->getResponse($request);
         // $response->setHttpResponseCode($this->_responseCode);
-        $response->setHeader('etag', $this->getEtag($response->result));
+        // $response->setHeader('etag', $this->getEtag($response->result));
         return $response;
     }
 
