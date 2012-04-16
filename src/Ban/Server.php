@@ -121,9 +121,27 @@ class Ban_Server
         $response->outputBody();
     }
     
+    public function checkApiKey($request)
+    {
+        $config = $this->getConfig();
+        if (!isset($config->apiuser) || empty($config->apiuser)) {
+            return;
+        }
+        list($user, $pass) = $request->getAuth();
+        if ($user != $config->apiuser) {
+            throw new Ban_Exception_Client("Access denied: wrong username", 401);
+        } elseif ($pass != $config->apipass) {
+            throw new Ban_Exception_Client("Access denied: wrong password", 401);
+        }
+    }
+
+    
     public function getResponse($request)
     {
         try {
+            
+            $this->checkApiKey($request);
+
             // dump($this->_map->getRoutes()->flatten());
             $path = $request->getPathInfo();
             list($model, $params) = $this->_map->getModelParams($path);
@@ -191,5 +209,5 @@ class Ban_Server
         }
         return null;
     }
-
+    
 }

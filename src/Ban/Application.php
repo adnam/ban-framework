@@ -64,6 +64,7 @@ class Ban_Application extends Zend_Application
                 $options = $options->merge(new Zend_Config_Ini($localOptionsRealPath, $this->_environment));
             }
             $this->setOptions($options->toArray());
+            Zend_Registry::set('apiconfig', $options);
         }
         
         if ($cache instanceof Zend_Cache_Backend && $cachedOptions !== false) {

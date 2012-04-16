@@ -11,6 +11,8 @@ class Ban_Request extends Zend_Controller_Request_Http
     
     protected $_method;
     
+    protected $_apiKey;
+    
     protected $_params = array(
         // 'filter' => array(),
         // 'order' => null,
@@ -163,5 +165,12 @@ class Ban_Request extends Zend_Controller_Request_Http
         }
         return $apiRequest;
     }
- 
+    
+    public function getAuth()
+    {
+        $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : null;
+        $pass = array_key_exists('PHP_AUTH_PW', $_SERVER)? $_SERVER['PHP_AUTH_PW'] : null;
+        return array($user, $pass);
+    }
+
 }

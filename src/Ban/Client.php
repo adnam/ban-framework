@@ -22,6 +22,12 @@ class Ban_Client
      *                              @see Zend_Http_Client
      */
     protected $_options = array(
+        'http_client_options' => array(
+            'useragent'       => 'Ban_Client',
+            'timeout'         => 120,
+            'username'        => null,
+            'password'        => null,
+        ),
     );
 
     /**
@@ -61,6 +67,27 @@ class Ban_Client
         $this->_logger = $logger;
     }
 
+    public static function factory($options = array())
+    {
+        $defaults = array(
+            'uri' => null,
+            'logger' => null,
+            'cache' => null,
+            'options' => array()
+        );
+        $options = array_merge($defaults, $options);
+        if (isset($options['logger']) && is_array($options['logger'])) {
+            $logger = Zend_Log::factory($options['logger']);
+        } else {
+            $logger = null;
+        }
+        if (isset($options['cache']) && is_array($options['cache'])) {
+            $cache = Zend_Cache::_makeBackend($options['cache']['name'], $options['cache']['options']);
+        } else {
+            $cache = null;
+        }
+        return new Ban_Client($options['uri'], $cache, $logger, $options['options']);
+    }
 
     /* ********************************************************************* */
     /*                  Option handling functions                            */
@@ -70,11 +97,11 @@ class Ban_Client
     {
         foreach ($options as $name => $value) {
             if ($name === 'http_client_options') {
-                self::getHttpClient()->setConfig($value);
-            } else {
-                $this->_setOption($name, $value);
+                $value = array_merge($this->_options['http_client_options'], $value);
             }
+            $this->_setOption($name, $value);
         }
+        self::getHttpClient()->setConfig($this->_options['http_client_options']);
     }
 
     /**
@@ -145,32 +172,32 @@ class Ban_Client
         return $this->_request(Zend_Http_Client::GET, $path, $params);
     }
     
-    function put($path, $params)
+    function put($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::PUT, $path, $params);
     }
 
-    function merge($path, $params)
+    function merge($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::MERGE, $path, $params);
     }
 
-    function post($path, $params)
+    function post($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::POST, $path, $params);
     }
 
-    function delete($path, $params)
+    function delete($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::DELETE, $path, $params);
     }
 
-    function options($path, $params)
+    function options($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::OPTIONS, $path, $params);
     }
 
-    function trace($path, $params)
+    function trace($path, $params = array())
     {
         return $this->_request(Zend_Http_Client::TRACE, $path, $params);
     }
